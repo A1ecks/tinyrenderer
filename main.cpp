@@ -14,6 +14,9 @@ public:
   bool OnUserUpdate(float fElapsedTime) override {
     // called once per frame
     Draw(50, 50, olc::Pixel(255, 0, 0));
+    if (GetKey(olc::Key::ESCAPE).bPressed) {
+      return false;
+    }
     return true;
   }
 };

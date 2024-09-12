@@ -1,44 +1,35 @@
 SHELL = Powershell.exe
 .SHELLFLAGS = -NoProfile -Command
 
-# Compiler
-CXX = g++
+CXX := g++
+SRC_DIR := src
+BUILD_DIR := build
+TARGET := bin/run
+SRC_EXT := cpp
+SRCS := $(shell gci -r -name -fi *.$(SRC_EXT))
+OBJS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SRCS:.$(SRC_EXT)=.o))
+CXXFLAGS := -luser32 -lgdi32 -lopengl32 -lgdiplus -lShlwapi -ldwmapi -lstdc++fs -static -std=c++17
+INC := -I include
 
-# Compiler flags
-CXXFLAGS = -luser32 -lgdi32 -lopengl32 -lgdiplus -lShlwapi -ldwmapi -lstdc++fs -static -std=c++17
-
-# Directories
-BUILD_DIR = bin
-SRC_DIR = src
-OBJ_DIR = obj
-
-# Target executable
-TARGET = $(BUILD_DIR)/main
-
-# For deleting the target
-TARGET_DEL := $(TARGET).exe
-
-# Source files
-SRCS := $(shell gci src -r -name -fi '*.cpp')
-
-# Object files
-OBJS := $(SRCS:.cpp=.o)
-
-# Default rule to build and run the executable
+# Default rule to build and run executable
+.PHONY: all
 all: $(TARGET) run
 
-# Rule to link object files into the target executable
-$(TARGET): $(OBJ_DIR)/$(OBJS)
-	$(CXX) -o $(TARGET) $(OBJ_DIR)/$(OBJS) $(CXXFLAGS) 
+# Link objects to executable
+$(TARGET): $(OBJS)
+	$(CXX) $^ -o $(TARGET) $(CXXFLAGS)
 
-# Rule to compile .cpp files into .o files
-$(OBJ_DIR)/$(OBJS): $(SRC_DIR)/$(SRCS)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Compile source files into .o files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.$(SRC_EXT)
+	@mkdir $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(INC) -c -o $@ $< -save-temps -03
 
-# Rule to run the executable
+# Run executable
+.PHONY: run
 run: $(TARGET)
 	$(TARGET)
 
-# Clean rule to remove generated files
+# Remove generated files
+.PHONY: clean
 clean:
-	rm $(TARGET_DEL); rm $(OBJ_DIR)/$(OBJS)
+	rm -r $(SRC_DIR)/*.o; rm -r $(TARGET).exe

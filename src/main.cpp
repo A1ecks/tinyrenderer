@@ -1,5 +1,5 @@
 #define OLC_PGE_APPLICATION
-#include "../lib/olcPixelGameEngine.h"
+#include "../include/olcPixelGameEngine.h"
 
 class TinyRenderer : public olc::PixelGameEngine {
 public:

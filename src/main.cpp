@@ -1,4 +1,4 @@
-#define OLC_PGE_APPLICATION
+#include "../include/line.h"
 #include "../include/olcPixelGameEngine.h"
 
 class TinyRenderer : public olc::PixelGameEngine {
@@ -13,7 +13,8 @@ public:
 
   bool OnUserUpdate(float fElapsedTime) override {
     // called once per frame
-    Draw(50, 50, olc::Pixel(olc::RED));
+    Line please(1, 1, 14, 6, olc::RED);
+    please.lineD(this);
     if (GetKey(olc::Key::ESCAPE).bPressed) {
       return false;
     }
